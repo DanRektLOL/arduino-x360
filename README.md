@@ -5,4 +5,4 @@ An xbox 360-related arduino project
 
 feel free to contact me at discord @danrekt, if you have a problem.
 
-I'm still working on the Arduino Leonardo side of things at the moment, but the esp32 requires the bluepad32 library/board to be installed, and the Leonardo will require dmadison's xinput library.
+I'm still working on the Arduino Leonardo side of things at the moment, but the esp32 requires richardoquesada's [bluepad32](https://github.com/ricardoquesada/bluepad32) library/board to be installed, and the Leonardo will require dmadison's [xinput library](https://github.com/dmadison/ArduinoXInput).
