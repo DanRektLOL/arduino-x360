@@ -5,7 +5,7 @@ An xbox 360-related arduino project
 
 feel free to contact me at discord @danrekt, if you have a problem.
 
-I'm still working on the Arduino Leonardo side of things at the moment, but the esp32 requires richardoquesada's [bluepad32](https://github.com/ricardoquesada/bluepad32) library/board to be installed, and the Leonardo will require dmadison's [xinput library](https://github.com/dmadison/ArduinoXInput). The arduino leonardo can be substituted for by many [other boards](https://github.com/dmadison/ArduinoXInput#compatible-boards).
+I'm still working on the Arduino Leonardo side of things at the moment, but the esp32 requires richardoquesada's [bluepad32](https://github.com/ricardoquesada/bluepad32) library/board to be installed, and the Leonardo will require dmadison's [xinput library](https://github.com/dmadison/ArduinoXInput). The arduino leonardo can be substituted for by many [other boards](https://github.com/dmadison/ArduinoXInput#compatible-boards), but they are absolutely untested.
 
 # Compatible ESP32 boards
 
@@ -35,7 +35,7 @@ I have tested an esp32-cam which did not work for me, but it may have been a har
 
 # Usage
 
-Simply flash your esp32 (model must support bluetooth classic) with the given code, and your xinput-compatible board, such as the Arduino Leonardo, with the given code, plug the leonardo into a jailbroken x360 with [usbdsecpatch](https://github.com/InvoxiPlayGames/UsbdSecPatch) as a plugin, run a wire from leonardo 5v to esp 5v, and establish common ground, and join the esp tx to leonardo rx.
+Simply flash your esp32 (model must support bluetooth classic) with the given code and flash your Arduino Leonardo, with the given code, plug the leonardo into a jailbroken x360 with [usbdsecpatch](https://github.com/InvoxiPlayGames/UsbdSecPatch) as a plugin in dashlaunch, run a wire from leonardo 5v to esp 5v, and establish common ground, and join the esp tx to leonardo rx.
 
 # Roadmap
 
