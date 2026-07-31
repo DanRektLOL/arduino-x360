@@ -24,9 +24,8 @@ void onDisconnectedController(ControllerPtr ctl) {
 }
 
 int cleanRawAxis(int raw) {
-    if (abs(raw) < 5) {
-        return 0;
-    }
+    // Shift hardware center down by 4
+    raw -= 4;
 
     if (raw < 0) {
         return map(constrain(raw, -508, 0), -508, 0, -512, 0);
