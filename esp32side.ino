@@ -1,118 +1,100 @@
 #include <Bluepad32.h>
 
-ControllerPtr myControllers[BP32_MAX_GAMEPADS];
+ControllerPtr myControllers[BP32_MAX_CONTROLLERS];
 
-void onConnectedController(ControllerPtr ctl) {
-    for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
-        if (myControllers[i] == nullptr) {
-            myControllers[i] = ctl;
-            
-            ctl->setColorLED(255, 0, 0);
-            ctl->playDualRumble(0, 100, 250, 0); 
-            break;
-        }
-    }
-}
-
-void onDisconnectedController(ControllerPtr ctl) {
-    for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
-        if (myControllers[i] == ctl) {
-            myControllers[i] = nullptr;
-            break;
-        }
-    }
-}
-
-int cleanRawAxis(int raw) {
-    // Shift hardware center down by 4
-    raw -= 4;
-
-    if (raw < 0) {
-        return map(constrain(raw, -508, 0), -508, 0, -512, 0);
-    } else {
-        return map(constrain(raw, 0, 512), 0, 512, 0, 512);
-    }
-}
-
-void processGamepad(ControllerPtr ctl) {
-    uint16_t buttons = ctl->buttons();
-    uint16_t miscButtons = ctl->miscButtons();
-
-    if ((miscButtons & MISC_BUTTON_SYSTEM) && (miscButtons & MISC_BUTTON_START)) {
-        ctl->disconnect();
-        return;
-    }
-
-    int btnCross    = (buttons & BUTTON_A) ? 1 : 0;
-    int btnCircle   = (buttons & BUTTON_B) ? 1 : 0;
-    int btnSquare   = (buttons & BUTTON_X) ? 1 : 0;
-    int btnTriangle = (buttons & BUTTON_Y) ? 1 : 0;
-    
-    int btnL1       = (buttons & BUTTON_SHOULDER_L) ? 1 : 0;
-    int btnR1       = (buttons & BUTTON_SHOULDER_R) ? 1 : 0;
-
-    int btnL3       = (buttons & BUTTON_THUMB_L) ? 1 : 0;
-    int btnR3       = (buttons & BUTTON_THUMB_R) ? 1 : 0;
-
-    int btnSelect   = (miscButtons & MISC_BUTTON_SELECT) ? 1 : 0;
-    int btnStart    = (miscButtons & MISC_BUTTON_START)  ? 1 : 0;
-    int btnPS       = (miscButtons & MISC_BUTTON_SYSTEM) ? 1 : 0;
-
-    uint8_t dpad = ctl->dpad();
-    int dpadUp    = (dpad & DPAD_UP) ? 1 : 0;
-    int dpadDown  = (dpad & DPAD_DOWN) ? 1 : 0;
-    int dpadLeft  = (dpad & DPAD_LEFT) ? 1 : 0;
-    int dpadRight = (dpad & DPAD_RIGHT) ? 1 : 0;
-
-    int rawL2 = map(constrain(ctl->brake(), 0, 1023), 0, 1023, 0, 255);
-    int rawR2 = map(constrain(ctl->throttle(), 0, 1023), 0, 1023, 0, 255);
-    
-    int triggerL2 = (rawL2 >= 254) ? 255 : rawL2;
-    int triggerR2 = (rawR2 >= 254) ? 255 : rawR2;
-
-    int axisX  = cleanRawAxis(ctl->axisX());
-    int axisY  = cleanRawAxis(ctl->axisY());
-    int axisRX = cleanRawAxis(ctl->axisRX());
-    int axisRY = cleanRawAxis(ctl->axisRY());
-
-    Serial.print(btnCross);    Serial.print(",");
-    Serial.print(btnCircle);   Serial.print(",");
-    Serial.print(btnSquare);   Serial.print(",");
-    Serial.print(btnTriangle); Serial.print(",");
-    Serial.print(btnL1);       Serial.print(",");
-    Serial.print(btnR1);       Serial.print(",");
-    Serial.print(btnL3);       Serial.print(",");
-    Serial.print(btnR3);       Serial.print(",");
-    Serial.print(btnSelect);   Serial.print(",");
-    Serial.print(btnStart);    Serial.print(",");
-    Serial.print(btnPS);       Serial.print(",");
-    Serial.print(dpadUp);      Serial.print(",");
-    Serial.print(dpadDown);    Serial.print(",");
-    Serial.print(dpadLeft);    Serial.print(",");
-    Serial.print(dpadRight);   Serial.print(",");
-    Serial.print(triggerL2);   Serial.print(",");
-    Serial.print(triggerR2);   Serial.print(",");
-    Serial.print(axisX);       Serial.print(",");
-    Serial.print(axisY);       Serial.print(",");
-    Serial.print(axisRX);      Serial.print(",");
-    Serial.println(axisRY);
-}
+// Compact 16-byte binary packet sent over Serial to Arduino Uno
+struct __attribute__((packed)) ControllerPacket {
+  uint8_t header1 = 0xAA;
+  uint8_t header2 = 0xBB;
+  int16_t lx, ly, rx, ry;
+  uint16_t l2, r2;
+  uint16_t buttons;
+};
 
 void setup() {
-    Serial.begin(115200);
+  // Main Hardware Serial (Pin 1 TX -> Uno Pin 0 RX)
+  Serial.begin(115200);
 
-    BP32.setup(&onConnectedController, &onDisconnectedController);
-    BP32.forgetBluetoothKeys();
+  BP32.setup(&onConnectedController, &onDisconnectedController);
+  BP32.enableVirtualDevice(false); // Disables virtual mouse emulation for touchpad
 }
 
 void loop() {
-    BP32.update();
+  if (BP32.update()) {
+    processControllers();
+  }
+  vTaskDelay(1);
+}
 
-    for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
-        ControllerPtr myController = myControllers[i];
-        if (myController && myController->isConnected()) {
-            processGamepad(myController);
-        }
+void onConnectedController(ControllerPtr ctl) {
+  for (int i = 0; i < BP32_MAX_CONTROLLERS; i++) {
+    if (myControllers[i] == nullptr) {
+      myControllers[i] = ctl;
+      ctl->setColorLED(255, 0, 0); // Solid RED light bar on successful pair
+      break;
     }
-    delay(4);
+  }
+}
+
+void onDisconnectedController(ControllerPtr ctl) {
+  for (int i = 0; i < BP32_MAX_CONTROLLERS; i++) {
+    if (myControllers[i] == ctl) {
+      myControllers[i] = nullptr;
+      break;
+    }
+  }
+}
+
+void processControllers() {
+  for (auto ctl : myControllers) {
+    if (ctl && ctl->isConnected() && ctl->isGamepad()) {
+      
+      // DISCONNECT SHORTCUT: Hold PS Button + Press Triangle
+      if (ctl->miscSystem() && ctl->y()) {
+        ctl->disconnect();
+        return;
+      }
+
+      // Pack analog stick and trigger values
+      ControllerPacket packet;
+      packet.lx = ctl->axisX();
+      packet.ly = ctl->axisY();
+      packet.rx = ctl->axisRX();
+      packet.ry = ctl->axisRY();
+      packet.l2 = ctl->brake();
+      packet.r2 = ctl->throttle();
+
+      // Check Touchpad click state
+      uint16_t miscMask = ctl->miscButtons();
+      uint16_t btnMask  = ctl->buttons();
+      bool touchpadClick = (miscMask & 0x0004) || (miscMask & 0x0008) || (btnMask & 0x0400);
+
+      // Pack buttons into bitmask
+      uint16_t b = 0;
+      if (ctl->a())          b |= (1 << 0);  // Cross
+      if (ctl->b())          b |= (1 << 1);  // Circle
+      if (ctl->x())          b |= (1 << 2);  // Square
+      if (ctl->y())          b |= (1 << 3);  // Triangle
+      if (ctl->l1())         b |= (1 << 4);  // L1
+      if (ctl->r1())         b |= (1 << 5);  // R1
+      if (ctl->thumbL())     b |= (1 << 6);  // L3 (Left Stick Click)
+      if (ctl->thumbR())     b |= (1 << 7);  // R3 (Right Stick Click)
+      
+      uint8_t dpad = ctl->dpad();
+      if (dpad & DPAD_UP)    b |= (1 << 8);  // D-Pad Up
+      if (dpad & DPAD_DOWN)  b |= (1 << 9);  // D-Pad Down
+      if (dpad & DPAD_LEFT)  b |= (1 << 10); // D-Pad Left
+      if (dpad & DPAD_RIGHT) b |= (1 << 11); // D-Pad Right
+      
+      if (ctl->miscSelect()) b |= (1 << 12); // SHARE
+      if (ctl->miscStart())  b |= (1 << 13); // OPTIONS
+      if (ctl->miscSystem()) b |= (1 << 14); // PS Button
+      if (touchpadClick)     b |= (1 << 15); // Touchpad Click
+
+      packet.buttons = b;
+
+      // Send 16-byte raw binary frame to Uno over Serial
+      Serial.write((uint8_t*)&packet, sizeof(packet));
+    }
+  }
 }
