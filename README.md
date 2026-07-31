@@ -12,7 +12,7 @@ I'm still working on the Arduino Leonardo side of things at the moment, but the 
 Simply flash your esp32 (model must support bluetooth classic) with the given code, and your xinput-compatible board, such as the Arduino Leonardo, with the given code, plug the leonardo into a jailbroken x360 with [usbdsecpatch](https://github.com/InvoxiPlayGames/UsbdSecPatch) as a plugin, run a wire from leonardo 5v to esp 5v, and establish common ground, and join the esp tx to leonardo rx.
 
 
-# roadmap
+# Roadmap
 
 actually release the leonardo code
 
