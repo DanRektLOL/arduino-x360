@@ -10,17 +10,26 @@ I'm still working on the Arduino Leonardo side of things at the moment, but the 
 # Compatible ESP32 boards
 
 ESP32
+
 WROOM (not tested)
+
 WROVER (not tested)
 
 The following boards are NOT compatible, as they lack bluetooth classic
 ESP32-S2 
-ESP32-S3 
-ESP32-C3 
-ESP32-C6 
-ESP32-C2 
+
+ESP32-S3
+
+ESP32-C3
+
+ESP32-C6
+
+ESP32-C2
+
 ESP32-H2 
+
 ESP8266
+
 I have tested an esp32-cam which did not work for me, but it may have been a hardware issue.
 
 # Usage
