@@ -5,7 +5,7 @@ A custom arduino leonardo + esp32 setup which translates ps4 (or bluepad32 compa
 
 feel free to contact me at discord @danrekt, if you have a problem.
 
-Version 1.0 has been released which features no rumble and minimal input delay.
+Version 1.0 has been released which features no rumble and noticeable input delay.
 
 # Compatible ESP32 boards
 
