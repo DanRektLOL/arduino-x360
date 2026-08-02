@@ -3,8 +3,6 @@ An xbox 360-related arduino project
 
 A custom arduino leonardo + esp32 setup which translates ps4 (or bluepad32 compatible controllers) input via bluetooth into xinput which a jailbroken xbox 360 can read, with the help of the [usbdsecpatch plugin](https://github.com/InvoxiPlayGames/UsbdSecPatch).
 
-feel free to contact me at discord @danrekt, if you have a problem.
-
 Version 1.0 has been released which features no rumble and noticeable input delay.
 
 # Compatible ESP32 boards
@@ -36,10 +34,4 @@ I have tested an esp32-cam which did not work for me, but it may have been a har
 # Usage
 
 Simply flash your esp32 (model must support bluetooth classic) with the given code and flash your Arduino Leonardo, with the given code, plug the leonardo into a jailbroken x360 with [usbdsecpatch](https://github.com/InvoxiPlayGames/UsbdSecPatch) as a plugin in dashlaunch, run a wire from leonardo 5v to esp 5v, and establish common ground, and join the esp tx to leonardo rx.
-In order to pair your controller, put it into pairing mode (hold the share and playstation button), the led should blink fast, and keep it near the esp, and it should connect. Your controller should vibrate for a moment, and its led should turn red. It is possible that it will first connect, then disconnect after a few seconds with a red led light. This is normal, and after this, putting the controller into pair mode again, should successfully connect.
-
-# Roadmap
-
-actually release the leonardo code ✔️
-
-rumble support (will require leonardo tx to esp rx) ❌
+In order to pair your controller, put it into pairing mode (hold the share and playstation button), the led should blink fast, and keep it near the esp, and it should connect. Your controller should vibrate for a moment, and its led should turn red. It is possible that it will first connect, then disconnect after a few seconds with a red led light. This is normal, and after this, putting the controller into pair mode again, should successfully connect. Also. as is stated in the usbdsecpatch readme, the leonardo will have to be reconnected after the splash animation, after which you can connect your controller.
