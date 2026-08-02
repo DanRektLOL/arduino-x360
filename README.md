@@ -1,11 +1,11 @@
 # arduino-x360
 An xbox 360-related arduino project
 
-(WIP) A custom arduino leonardo + esp32 setup which translates ps4 (or most bluetooth controllers, really) input via bluetooth into xinput which a jailbroken xbox 360 reads, with the help of the [usbdsecpatch plugin](https://github.com/InvoxiPlayGames/UsbdSecPatch).
+A custom arduino leonardo + esp32 setup which translates ps4 (or bluepad32 compatible controllers) input via bluetooth into xinput which a jailbroken xbox 360 can read, with the help of the [usbdsecpatch plugin](https://github.com/InvoxiPlayGames/UsbdSecPatch).
 
 feel free to contact me at discord @danrekt, if you have a problem.
 
-I'm still working on the Arduino Leonardo side of things at the moment, but the esp32 requires richardoquesada's [bluepad32](https://github.com/ricardoquesada/bluepad32) library/board to be installed, and the Leonardo will require dmadison's [xinput library](https://github.com/dmadison/ArduinoXInput). The arduino leonardo can be substituted for by many [other boards](https://github.com/dmadison/ArduinoXInput#compatible-boards), but they are absolutely untested for this purpose.
+Version 1.0 has been released which features no rumble and minimal input delay.
 
 # Compatible ESP32 boards
 
@@ -40,6 +40,6 @@ In order to pair your controller, put it into pairing mode (hold the share and p
 
 # Roadmap
 
-actually release the leonardo code 
+actually release the leonardo code ✔️
 
-rumble support (will require leonardo tx to esp rx)
+rumble support (will require leonardo tx to esp rx) ❌
