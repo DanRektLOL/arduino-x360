@@ -38,4 +38,4 @@ Simply flash your esp32 (model must support bluetooth classic) with the given co
 
 In order to pair your controller, put it into pairing mode (hold the share and playstation button), the led should blink fast, and keep it near the esp, and it should connect. Your controller should vibrate for a moment, and its led should turn red. It is possible that it will first connect, then disconnect after a few seconds with a red led light. This is normal, and after this, putting the controller into pair mode again, should successfully connect.
 
-**IMPORTANT** as is stated in the usbdsecpatch readme, the leonardo will have to be reconnected after the splash animation, after which you can connect your controller.
+**IMPORTANT**: as is stated in the usbdsecpatch readme, the leonardo will have to be reconnected after the splash animation, after which you can connect your controller.
