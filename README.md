@@ -3,7 +3,7 @@ An xbox 360-related arduino project
 
 A custom arduino leonardo + esp32 setup which translates ps4 (or bluepad32 compatible controllers) input via bluetooth into xinput which a jailbroken xbox 360 can read, with the help of the [usbdsecpatch plugin](https://github.com/InvoxiPlayGames/UsbdSecPatch).
 
-Version 1.0 has been released which features no rumble and noticeable input delay.
+Version 1.0 has been released which features no rumble and slightly noticeable input delay.
 
 # Compatible ESP32 boards
 
